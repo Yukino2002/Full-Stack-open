@@ -2,6 +2,7 @@ const Persons = ({ filterName, persons }) => {
   const showPersons = filterName === ''
     ? persons
     : persons.filter(person => person.name.toLowerCase() === filterName.toLowerCase())
+
   return (
     <div>
       {showPersons.map(person =>
