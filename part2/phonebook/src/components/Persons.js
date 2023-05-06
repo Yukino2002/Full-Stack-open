@@ -1,4 +1,6 @@
-const Persons = ({ filterName, persons }) => {
+import services from "../services/PersonService"
+
+const Persons = ({ filterName, persons, setPersons }) => {
   const showPersons = filterName === ''
     ? persons
     : persons.filter(person => person.name.toLowerCase() === filterName.toLowerCase())
@@ -6,7 +8,20 @@ const Persons = ({ filterName, persons }) => {
   return (
     <div>
       {showPersons.map(person =>
-        <p key={person.name}>{person.name} {person.number}</p>
+        <div key={person.id}>
+          <p>{person.name} {person.number}</p>
+          <button onClick={() => {
+            if (window.confirm(`Delete ${person.name} ?`)) {
+              services
+                .deletePerson(person.id)
+                .then(response => {
+                  if (response.status === 200) {
+                    setPersons(showPersons.filter(showPerson => showPerson.id !== person.id))
+                  }
+                })
+            }
+          }}>delete</button>
+        </div>
       )}
     </div>
   )

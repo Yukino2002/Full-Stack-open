@@ -1,20 +1,34 @@
 import axios from 'axios'
 const baseUrl = 'http://localhost:3001/persons'
 
-const getAll = () => {
+const getPersons = () => {
   const promise = axios.get(baseUrl)
   return promise.then(response => {
     return response.data
   })
 }
 
-const create = (newPerson) => {
+const createPerson = (newPerson) => {
   const promise = axios.post(baseUrl, newPerson)
   return promise.then(response => {
     return response.data
   })
 }
 
-const services = { getAll, create }
+const deletePerson = (personId) => {
+  const promise = axios.delete(`${baseUrl}/${personId}`)
+  return promise.then(response => {
+    return response
+  })
+}
+
+const updatePerson = (updatedPerson) => {
+  const promise = axios.put(`${baseUrl}/${updatedPerson.id}`, updatedPerson)
+  return promise.then(response => {
+    return response.data
+  })
+}
+
+const services = { getPersons, createPerson, deletePerson, updatePerson }
 
 export default services

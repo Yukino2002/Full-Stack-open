@@ -11,26 +11,27 @@ const PersonForm = ({ persons, setPersons }) => {
   const handleSubmit = (event) => {
     event.preventDefault()
     const newPerson = { name: newName, number: newNumber }
-    if (persons.find(person => _.isEqual(person.name, newPerson.name))) {
-      alert(`${newPerson.name} is already added to the phonebook`)
+    const person = persons.find(person => _.isEqual(person.name, newPerson.name))
+
+    if (person) {
+      if (window.confirm(`${newPerson.name} is already added to the phonebook, replace the old number with a new one?`)) {
+        const updatedPerson = { ...person, number: newNumber }
+        services
+          .updatePerson(updatedPerson)
+          .then(personData => {
+            setPersons(persons.map(person => person.id === updatedPerson.id ? personData : person))
+          })
+      }
       return
     }
 
     services
-    .create(newPerson)
-    .then(newPersonData => {
-      setPersons(persons.concat(newPersonData))
-      setNewName('')
-      setNewNumber('')
-    })
-
-    // axios
-    //   .post('http://localhost:3001/persons', newPerson)
-    //   .then(response => {
-    //     setPersons(persons.concat(response.data))
-    //     setNewName('')
-    //     setNewNumber('')
-    //   })
+      .createPerson(newPerson)
+      .then(newPersonData => {
+        setPersons(persons.concat(newPersonData))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = (event) => {

@@ -12,7 +12,7 @@ const App = () => {
 
   useEffect(() => {
     services
-      .getAll()
+      .getPersons()
       .then(personsList => {
         setPersons(personsList)
       })
@@ -25,7 +25,7 @@ const App = () => {
       <h3>add a new</h3>
       <PersonForm persons={persons} setPersons={setPersons} />
       <h3>Numbers</h3>
-      <Persons filterName={filterName} persons={persons} />
+      <Persons filterName={filterName} persons={persons} setPersons={setPersons} />
     </div>
   )
 }
