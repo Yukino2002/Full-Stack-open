@@ -1,7 +1,10 @@
 import { useState } from "react"
+
+import services from '../services/PersonService'
+
 const _ = require('lodash')
 
-const PersonForm = ({persons, setPersons}) => {
+const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
@@ -12,9 +15,22 @@ const PersonForm = ({persons, setPersons}) => {
       alert(`${newPerson.name} is already added to the phonebook`)
       return
     }
-    setPersons(persons.concat(newPerson))
-    setNewName('')
-    setNewNumber('')
+
+    services
+    .create(newPerson)
+    .then(newPersonData => {
+      setPersons(persons.concat(newPersonData))
+      setNewName('')
+      setNewNumber('')
+    })
+
+    // axios
+    //   .post('http://localhost:3001/persons', newPerson)
+    //   .then(response => {
+    //     setPersons(persons.concat(response.data))
+    //     setNewName('')
+    //     setNewNumber('')
+    //   })
   }
 
   const handleNameChange = (event) => {
