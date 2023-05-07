@@ -1,6 +1,13 @@
 import services from "../services/PersonService"
 
-const Persons = ({ filterName, persons, setPersons }) => {
+const Persons = ({ filterName, persons, setPersons, setMessage, setColor }) => {
+
+  const displayMessage = (message, color) => {
+    setMessage(message)
+    setColor(color)
+    setTimeout(() => { setMessage(null) }, 4000)
+  }
+
   const showPersons = filterName === ''
     ? persons
     : persons.filter(person => person.name.toLowerCase() === filterName.toLowerCase())
@@ -15,12 +22,16 @@ const Persons = ({ filterName, persons, setPersons }) => {
               services
                 .deletePerson(person.id)
                 .then(response => {
-                  if (response.status === 200) {
-                    setPersons(showPersons.filter(showPerson => showPerson.id !== person.id))
-                  }
+                  displayMessage(`Deleted ${person.name}`, 'green')
                 })
+                .catch(error => {
+                  displayMessage(`Information of ${person.name} has already been removed from the server`, 'red')
+                })
+              setPersons(showPersons.filter(showPerson => showPerson.id !== person.id))
             }
-          }}>delete</button>
+          }}>
+            delete
+          </button>
         </div>
       )}
     </div>

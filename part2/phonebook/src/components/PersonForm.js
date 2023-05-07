@@ -4,9 +4,17 @@ import services from '../services/PersonService'
 
 const _ = require('lodash')
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, setMessage, setColor }) => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+
+  const displayMessage = (message, color) => {
+    setNewName('')
+    setNewNumber('')
+    setMessage(message)
+    setColor(color)
+    setTimeout(() => { setMessage(null) }, 4000)
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -20,6 +28,11 @@ const PersonForm = ({ persons, setPersons }) => {
           .updatePerson(updatedPerson)
           .then(personData => {
             setPersons(persons.map(person => person.id === updatedPerson.id ? personData : person))
+            displayMessage(`Added ${personData.name}`, 'green')
+          })
+          .catch((error) => {
+            setPersons(persons.filter(person => person.id !== updatedPerson.id))
+            displayMessage(`Information of ${updatedPerson.name} has already been removed from the server`, 'red')
           })
       }
       return
@@ -29,8 +42,7 @@ const PersonForm = ({ persons, setPersons }) => {
       .createPerson(newPerson)
       .then(newPersonData => {
         setPersons(persons.concat(newPersonData))
-        setNewName('')
-        setNewNumber('')
+        displayMessage("Added " + newPersonData.name, 'green')
       })
   }
 
