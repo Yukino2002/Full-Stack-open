@@ -43,10 +43,6 @@ const generateId = () => {
   return maxId + 1
 }
 
-// app.get('/', (request, response) => {
-//   response.send('fsopen')
-// })
-
 app.get('/info', (request, response) => {
   response.send(
     `<div>
