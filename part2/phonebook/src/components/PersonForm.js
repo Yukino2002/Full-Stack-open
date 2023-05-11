@@ -30,9 +30,9 @@ const PersonForm = ({ persons, setPersons, setMessage, setColor }) => {
             setPersons(persons.map(person => person.id === updatedPerson.id ? personData : person))
             displayMessage(`Added ${personData.name}`, 'green')
           })
-          .catch((error) => {
-            setPersons(persons.filter(person => person.id !== updatedPerson.id))
-            displayMessage(`Information of ${updatedPerson.name} has already been removed from the server`, 'red')
+          .catch(error => {
+            console.log(error)
+            displayMessage(error.response.data.error, 'red')
           })
       }
       return
@@ -43,6 +43,10 @@ const PersonForm = ({ persons, setPersons, setMessage, setColor }) => {
       .then(newPersonData => {
         setPersons(persons.concat(newPersonData))
         displayMessage("Added " + newPersonData.name, 'green')
+      })
+      .catch(error => {
+        console.log(error.response.data.error)
+        displayMessage(error.response.data.error, 'red')
       })
   }
 

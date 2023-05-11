@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 if (process.argv.length < 3) {
-  console.log("Password must be provided!")
+  console.log('Password must be provided!')
   process.exit()
 }
 
@@ -19,7 +19,6 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 
 if (process.argv.length === 3) {
-  console.log("ss")
   Person.find({}).then(result => {
     result.forEach(person => {
       console.log(person)
