@@ -24,5 +24,6 @@ module.exports = {
       'never'
     ],
     'no-console': 0
-  }
+  },
+  'ignorePatterns': ['build']
 }
