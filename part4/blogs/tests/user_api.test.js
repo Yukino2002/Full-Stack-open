@@ -22,9 +22,9 @@ describe('when there is initially one user in db', () => {
     const usersAtStart = users.map(u => u.toJSON())
 
     const newUser = {
-      username: 'mluukkai',
-      name: 'Matti Luukkainen',
-      password: 'salainen',
+      username: 'Yukino2002',
+      name: 'PJ',
+      password: 'PPJJ',
     }
 
     await api
@@ -39,5 +39,30 @@ describe('when there is initially one user in db', () => {
 
     const usernames = usersAtEnd.map(u => u.username)
     expect(usernames).toContain(newUser.username)
+  })
+
+  test('fails when password or username length is less than 3', async () => {
+    const newUser = {
+      username: 'Yukino2002',
+      name: 'PJ',
+      password: 'PP',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    newUser.username = 'PP'
+    newUser.password = 'PPJJ'
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+
+    const users = await User.find({})
+    const usersAtStart = users.map(u => u.toJSON())
+    expect(usersAtStart.length).toBe(1)
   })
 })
