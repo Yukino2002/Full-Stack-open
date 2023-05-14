@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IjhtYW4yMDAyIiwiaWQiOiI2NDYwZjg1OGJkNjU2NjA3ODFkMjE3YjQiLCJpYXQiOjE2ODQwODEzMDF9.jz3XxSBajotBI2VI8if_1mAOEfCS78eQHItEw59iAkY
 
 {
   "title": "Dum dum",
   "author": "Malu",
   "url": "/",
-  "likes": 23
+  "likes": 24
 }
