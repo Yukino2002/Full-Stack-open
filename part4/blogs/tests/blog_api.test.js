@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
@@ -21,14 +22,14 @@ const initialBlogs = [
   },
 ]
 
-beforeEach(async () => {
-  await Blog.deleteMany({})
-  const blogs = initialBlogs.map(blog => new Blog(blog))
-  const promises = blogs.map(blog => blog.save())
-  await Promise.all(promises)
-}, 10000)
-
 describe('retreival of blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    const blogs = initialBlogs.map(blog => new Blog(blog))
+    const promises = blogs.map(blog => blog.save())
+    await Promise.all(promises)
+  }, 10000)
+
   test('content type is application/json', async () => {
     await api
       .get('/api/blogs')
@@ -50,8 +51,32 @@ describe('retreival of blogs', () => {
 })
 
 describe('addition of blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    const blogs = initialBlogs.map(blog => new Blog(blog))
+    const promises = blogs.map(blog => blog.save())
+    await Promise.all(promises)
+  }, 10000)
+
   test('post a blog', async () => {
-    const response = await api.post('/api/blogs')
+    let token = null
+    async function getToken() {
+      const response = await api
+        .post('/api/login')
+        .send({
+          username: 'root',
+          password: 'sekret'
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+      token = response.body.token
+    }
+
+    await getToken()
+
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(initialBlogs[0])
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -61,10 +86,27 @@ describe('addition of blogs', () => {
   })
 
   test('likes is set to 0 if missing', async () => {
+    let token = null
+    async function getToken() {
+      const response = await api
+        .post('/api/login')
+        .send({
+          username: 'root',
+          password: 'sekret'
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+      token = response.body.token
+    }
+
+    await getToken()
+
     const blog = initialBlogs[0]
     delete blog.likes
 
-    const response = await api.post('/api/blogs')
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', `Bearer ${token}`)
       .send(blog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -87,10 +129,34 @@ describe('addition of blogs', () => {
 })
 
 describe('deletion of blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    const blogs = initialBlogs.map(blog => new Blog(blog))
+    const promises = blogs.map(blog => blog.save())
+    await Promise.all(promises)
+  }, 10000)
+
   test('delete a blog', async () => {
+    let token = null
+    async function getToken() {
+      const response = await api
+        .post('/api/login')
+        .send({
+          username: 'root',
+          password: 'sekret'
+        })
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+      token = response.body.token
+    }
+
+    await getToken()
+
     const allBlogs = await api.get('/api/blogs')
     const blog = allBlogs.body[0]
-    await api.delete(`/api/blogs/${blog.id}`)
+    await api
+      .delete(`/api/blogs/${blog.id}`)
+      .set('Authorization', `Bearer ${token}`)
       .expect(204)
 
     const allBlogsAfterDeletion = await api.get('/api/blogs')
@@ -100,6 +166,13 @@ describe('deletion of blogs', () => {
 })
 
 describe('updation of blogs', () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({})
+    const blogs = initialBlogs.map(blog => new Blog(blog))
+    const promises = blogs.map(blog => blog.save())
+    await Promise.all(promises)
+  }, 10000)
+
   test('update a blog', async () => {
     const allBlogs = await api.get('/api/blogs')
     const blog = allBlogs.body[0]
